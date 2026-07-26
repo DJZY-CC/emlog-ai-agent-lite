@@ -281,4 +281,73 @@ function ai_agent_get_default_tools_json()
  * AI auto summary + tag recommendation (save_log hook)
  * Generates excerpt and tags when article is saved
  */
-// Lite 版：不含 AI 自动摘要和标签推荐功能
+function ai_agent_auto_summary_and_tags($blogid, $pubPost, $logData)
+{
+    if (empty($blogid)) return;
+
+    $config = ai_agent_get_config();
+    if (empty($config['llm_api_url']) || empty($config['llm_api_key'])) return;
+
+    $db = MySql::getInstance();
+    $row = $db->once_fetch_array("SELECT gid, title, content, excerpt, tags FROM " . DB_PREFIX . "blog WHERE gid=" . intval($blogid));
+    if (!$row) return;
+
+    $plain = strip_tags($row['content']);
+    if (mb_strlen($plain) < 50) return;
+
+    $sample = mb_substr($plain, 0, 2000);
+    $need_excerpt = empty($row['excerpt']);
+    $need_tags = empty($row['tags']);
+    if (!$need_excerpt && !$need_tags) return;
+
+    $parts = [];
+    if ($need_excerpt) $parts[] = "1. Generate a summary within 150 chars";
+    if ($need_tags) {
+        $existing = [];
+        $tq = $db->query("SELECT tagname FROM " . DB_PREFIX . "tag ORDER BY tid DESC LIMIT 30");
+        while ($tr = $db->fetch_array($tq)) $existing[] = $tr['tagname'];
+        $ref = !empty($existing) ? " (prefer existing: " . implode(", ", array_slice($existing, 0, 15)) . ")" : "";
+        $parts[] = "2. Recommend 3-5 tags{$ref}, comma separated";
+    }
+
+    $sys = "You are a blog content assistant. Complete these tasks:\n" . implode("\n", $parts) . "\n\nOutput JSON only:\n{";
+    $jp = [];
+    if ($need_excerpt) $jp[] = '"excerpt":"summary"';
+    if ($need_tags) $jp[] = '"tags":"tag1,tag2"';
+    $sys .= implode(",", $jp) . "}";
+
+    $body = [
+        'model' => $config['llm_model'],
+        'messages' => [['role' => 'system', 'content' => $sys], ['role' => 'user', 'content' => "Title: {$row['title']}\n\nContent:\n{$sample}"]],
+        'temperature' => 0.3, 'max_tokens' => 500,
+    ];
+
+    $ch = curl_init($config['llm_api_url']);
+    curl_setopt_array($ch, [CURLOPT_POST => true, CURLOPT_POSTFIELDS => json_encode($body, JSON_UNESCAPED_UNICODE), CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'Authorization: Bearer ' . $config['llm_api_key']], CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 30, CURLOPT_SSL_VERIFYPEER => false]);
+    $resp = curl_exec($ch);
+    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    if ($resp === false || $code !== 200) return;
+
+    $data = json_decode($resp, true);
+    $ai = $data['choices'][0]['message']['content'] ?? '';
+    if (empty($ai)) return;
+    $ai = preg_replace('/```json\s*/', '', $ai);
+    $ai = preg_replace('/```\s*$/', '', $ai);
+    $result = json_decode(trim($ai), true);
+    if (!$result) return;
+
+    $fields = [];
+    if ($need_excerpt && !empty($result['excerpt'])) {
+        $ex = addslashes(mb_substr($result['excerpt'], 0, 300));
+        $fields[] = "excerpt='{$ex}'";
+    }
+    if ($need_tags && !empty($result['tags'])) {
+        $tag_model = new Tag_Model();
+        $tag_model->updateTag($result['tags'], $blogid);
+    }
+    if (!empty($fields)) {
+        $db->query("UPDATE " . DB_PREFIX . "blog SET " . implode(",", $fields) . " WHERE gid=" . intval($blogid));
+    }
+}
+addAction('save_log', 'ai_agent_auto_summary_and_tags');
