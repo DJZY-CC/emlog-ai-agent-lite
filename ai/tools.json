@@ -292,7 +292,7 @@
         },
         "media_url": {
           "type": "string",
-          "description": "媒体嵌入URL或ID"
+          "description": "媒体嵌入完整URL（必须以http/https开头），使用 search_music 或 search_video 返回的 embed_url 字段"
         },
         "sortid": {
           "type": "integer",
@@ -301,6 +301,10 @@
         "tags": {
           "type": "string",
           "description": "标签，逗号分隔"
+        },
+        "cover": {
+          "type": "string",
+          "description": "封面图片URL（可选），可使用 search_images 返回的 image_url 字段，图片会自动下载并设为文章封面"
         }
       },
       "required": [

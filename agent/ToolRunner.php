@@ -1078,34 +1078,46 @@ class AIAgent_ToolRunner
         $media_url = trim($params['media_url'] ?? '');
         $sortid = intval($params['sortid'] ?? 0);
         $tags = trim($params['tags'] ?? '');
+        $cover = trim($params['cover'] ?? '');
 
         if (empty($title) || empty($content)) {
             throw new Exception('标题和内容不能为空');
         }
 
-        // 构建嵌入代码
-        $embed_html = '';
-        if ($media_type === 'music') {
-            $embed_html = '<div class="music-player"><iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="' . $media_url . '"></iframe></div>';
-        } elseif ($media_type === 'video') {
-            $embed_html = '<div class="video-player"><iframe src="' . $media_url . '" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" width="100%" height="500"></iframe></div>';
+        // Validate media_url is a full URL
+        if (!empty($media_url) && !preg_match('/^https?:\/\//', $media_url)) {
+            throw new Exception('media_url must be a full embed URL (http://...), not a song/video ID. Use embed_url from search_music/search_video results.');
         }
 
-        // 组合内容
+        $embed_html = '';
+        if ($media_type === 'music') {
+            $embed_html = '<div class="music-player"><iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="' . htmlspecialchars($media_url) . '"></iframe></div>';
+        } elseif ($media_type === 'video') {
+            $embed_html = '<div class="video-player"><iframe src="' . htmlspecialchars($media_url) . '" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" width="100%" height="500"></iframe></div>';
+        }
+
         $full_content = $embed_html . "\n\n" . $content;
 
-        // 调用发布文章
-        return $this->tool_publish_article([
+        $result = $this->tool_publish_article([
             'title' => $title,
             'content' => $full_content,
             'sortid' => $sortid,
             'tags' => $tags,
         ]);
+
+        // Set cover if provided
+        $aid = $result['aid'] ?? 0;
+        if ($aid > 0 && !empty($cover) && preg_match('/^https?:\/\//', $cover)) {
+            $local_path = $this->downloadAndSaveImage($cover, $aid);
+            if (!empty($local_path)) {
+                $this->setArticleCover($aid, $local_path);
+                $result['cover_set'] = true;
+            }
+        }
+
+        return $result;
     }
 
-    /**
-     * 批量添加标签
-     */
     private function tool_batch_add_tags($params)
     {
         $tags = isset($params['tags']) ? trim($params['tags']) : '';
