@@ -1,37 +1,42 @@
-# AI Agent 智能助手（Pro 完整版）
+# AI Agent 智能助手（免费版）
 
-> emlog 博客平台首款基于 **ReAct Agent + 工具调用 + 三层记忆系统** 的智能运维插件
+> emlog 博客平台基于 **ReAct Agent** 的智能对话助手 — 让 AI 读懂你的博客
 
-## 核心功能
+## 免费版功能
 
-- **ReAct Agent 引擎** — 多轮工具调用循环，最多3轮
-- **18 个内置工具** — 文章管理、配图、音乐、视频、评论、统计等
-- **三层记忆系统** — SOUL.md 人格 + 用户长期记忆 + 站点上下文
-- **AI 自动发文** — 伪Cron触发，智能话题生成
-- **3 源配图搜索** — Pexels / Unsplash / Pixabay
-- **五级权限控制** — admin / editor / writer / visitor / guest
-- **前台对话窗口** — Markdown渲染、响应式、PJAX兼容
-- **完整后台设置** — 7 个 Tab，涵盖所有配置项
-
-## 版本说明
-
-| 版本 | 仓库 | 功能 |
-|------|------|------|
-| **Pro（本仓库）** | [emlog-ai-agent-pro](https://github.com/DJZY-CC/emlog-ai-agent-pro) | 全部 18 个工具、自动发文、配图、评论管理 |
-| **Lite（公开版）** | [emlog-ai-agent-lite](https://github.com/DJZY-CC/emlog-ai-agent-lite) | 7 个只读工具、对话窗口、基础记忆 |
+- 🤖 ReAct Agent 引擎（多轮工具调用）
+- 🔍 7 个只读工具（搜索/查看/统计/评论）
+- 🧠 三层记忆系统
+- 💬 前台对话窗口（Markdown渲染、响应式）
+- 🔒 安全防护（频率限制、内容过滤）
+- ⚙️ 完整后台设置
 
 ## 安装
 
-1. 下载 `ai_agent.zip`
+1. [下载最新 Release](https://github.com/DJZY-CC/emlog-ai-agent-lite/releases)
 2. emlog 后台 → 插件管理 → 安装插件 → 上传 zip
-3. 启用插件 → 设置 → 配置 LLM API
+3. 启用 → 设置 → 配置 LLM API
 
-## 环境要求
+## 推荐免费 LLM
 
-- emlog Pro 2.x
-- PHP 7.4+ / 8.1
-- MySQL 5.6+
-- PHP 扩展：cURL、JSON、PDO
+| 服务商 | 模型 | 免费额度 |
+|--------|------|---------|
+| [硅基流动](https://cloud.siliconflow.cn) | DeepSeek V3 | 送 ¥16 |
+| [智谱 AI](https://www.bigmodel.cn) | GLM-4 Flash | **永久免费** |
+
+## 🚀 升级 Pro 版
+
+| 功能 | Lite | Pro |
+|------|:----:|:---:|
+| 对话/搜索/统计 | ✅ | ✅ |
+| AI 发文/改文/删文 | ❌ | ✅ |
+| AI 配图（文生图+3源搜索） | ❌ | ✅ |
+| 音乐/视频多媒体文章 | ❌ | ✅ |
+| AI 自动回复评论 | ❌ | ✅ |
+| 定时自动发文 | ❌ | ✅ |
+| 工具数量 | 7 | **18** |
+
+[获取 Pro 版](https://github.com/DJZY-CC/emlog-ai-agent-lite/issues)
 
 ## 许可证
 
