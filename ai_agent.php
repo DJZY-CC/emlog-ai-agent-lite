@@ -1,17 +1,17 @@
 <?php
 /*
-Plugin Name: AI Agent 智能助手
-Version: 1.0.5
-Plugin URL: https://www.emlog.net/plugin/detail/ai_agent
-Description: 首款基于 ReAct Agent + 工具调用 + 三层记忆系统的博客智能运维助手，让AI真正"读懂你的博客"。
-Author: AI Agent Team
-Author URL: https://www.emlog.net/profiles/ai_agent
+Plugin Name: AI Agent 智能助手（免费版）
+Version: 1.0.6-lite
+Plugin URL: https://github.com/DJZY-CC/emlog-ai-agent-lite
+Description: 基于 ReAct Agent 的博客智能对话助手，支持文章搜索、分类浏览、站点统计等只读功能。免费开源，无限制使用。
+Author: DJZY-CC
+Author URL: https://github.com/DJZY-CC
 */
 
 defined('EMLOG_ROOT') || exit('access denied!');
 
 // 插件常量
-define('AI_AGENT_VERSION', '1.0.5');
+define('AI_AGENT_VERSION', '1.0.6-lite');
 define('AI_AGENT_DIR', __DIR__);
 define('AI_AGENT_URL', '../content/plugins/ai_agent');
 
@@ -89,9 +89,9 @@ function ai_agent_get_config()
         'img_mode'            => 'generate',
         // 图片搜索配置（支持多源）
         'img_search_provider' => 'pexels',
-        'img_search_api_key'  => '',
-        'img_search_unsplash_key' => '',
-        'img_search_pixabay_key'  => '',
+        'img_search_api_key'  => '', // Lite: 不使用
+        'img_search_unsplash_key' => '', // Lite: 不使用
+        'img_search_pixabay_key'  => '', // Lite: 不使用
 
         // 标签配置
         'tag_query_limit'   => 50,
@@ -146,19 +146,7 @@ function ai_agent_admin_head()
     echo '<link rel="stylesheet" href="' . AI_AGENT_URL . '/assets/css/admin.css?v=' . AI_AGENT_VERSION . '">' . "\n";
     echo '<script src="' . AI_AGENT_URL . '/assets/js/admin.js?v=' . AI_AGENT_VERSION . '"></script>' . "\n";
 }
-// 处理导出/导入请求
-// 伪 Cron：自动发文触发（随访客访问触发）
-function ai_agent_cron_trigger()
-{
-    // 只在前台页面触发，后台不触发
-    if (defined('ADMIN_ROOT')) return;
-    // 概率触发（1/10 请求），避免每次访问都检查
-    if (mt_rand(1, 10) !== 1) return;
-
-    require_once __DIR__ . '/cron.php';
-    ai_agent_auto_publish_trigger();
-}
-addAction('index_footer', 'ai_agent_cron_trigger');
+// Lite 版：不含自动发文功能
 
 addAction('adm_head', 'ai_agent_admin_head');
 

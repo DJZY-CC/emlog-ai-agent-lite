@@ -508,7 +508,7 @@ function ai_agent_view_basic($config)
                 </div>
 
                 <hr class="my-4">
-                <h6 class="font-weight-bold text-primary">配图模式设置</h6>
+                <h6 class="font-weight-bold text-primary" style="display:none">配图模式设置</h6>
                 <p class="text-muted small mb-3">选择文章配图的来源方式。三种模式都支持，可按需切换。</p>
 
                 <div class="form-group row">
