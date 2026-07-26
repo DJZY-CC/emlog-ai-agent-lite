@@ -1,0 +1,11 @@
+*.zip
+.DS_Store
+Thumbs.db
+*.log
+ai/runtime/*
+ai/memory/*
+ai/logs/*
+!ai/memory/.gitkeep
+!ai/runtime/.gitkeep
+!ai/logs/.gitkeep
+test_plugin.php
