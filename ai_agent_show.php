@@ -72,6 +72,8 @@ function ai_agent_handle_new_session()
  */
 function ai_agent_handle_chat()
 {
+    // Suppress PHP warnings/errors to ensure clean JSON output
+    $old_level = error_reporting(0);
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         Output::error('请求方式错误', 405);
         return;
@@ -176,7 +178,8 @@ function ai_agent_handle_chat()
         $memory_manager->appendMemory("用户问: {$message}\nAI答: {$result['response']}");
     }
 
-    Output::ok([
+    error_reporting($old_level);
+        Output::ok([
         'response'   => $result['response'],
         'tool_calls' => $result['tool_calls'],
         'log_count'  => count($result['log']),
