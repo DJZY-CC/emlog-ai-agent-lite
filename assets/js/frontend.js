@@ -122,7 +122,7 @@
 
     function newSession() {
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', '?plugin=ai_agent&action=new_session', true);
+        xhr.open('GET', (window.AI_AGENT_API || '?plugin=ai_agent&action=') + 'new_session', true);
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4 && xhr.status === 200) {
                 try {
@@ -140,7 +140,7 @@
     function loadHistory() {
         if (!sessionId || !messages) return;
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', '?plugin=ai_agent&action=history&session_id=' + encodeURIComponent(sessionId), true);
+        xhr.open('GET', (window.AI_AGENT_API || '?plugin=ai_agent&action=') + 'history&session_id=' + encodeURIComponent(sessionId), true);
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4 && xhr.status === 200) {
                 try {
@@ -180,7 +180,7 @@
         var loadingEl = appendMessage('loading', '正在思考中');
 
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', '?plugin=ai_agent&action=chat', true);
+        xhr.open('POST', (window.AI_AGENT_API || '?plugin=ai_agent&action=') + 'chat', true);
         xhr.withCredentials = true;
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.timeout = parseInt(document.getElementById('ai-agent-widget').dataset.timeout || '120') * 1000;

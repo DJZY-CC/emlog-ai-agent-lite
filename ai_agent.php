@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: AI Agent 智能助手
-Version: 1.0.6
+Version: 1.0.5
 Plugin URL: https://www.emlog.net/plugin/detail/ai_agent
 Description: 首款基于 ReAct Agent + 工具调用 + 三层记忆系统的博客智能运维助手，让AI真正"读懂你的博客"。
 Author: AI Agent Team
@@ -11,7 +11,7 @@ Author URL: https://www.emlog.net/profiles/ai_agent
 defined('EMLOG_ROOT') || exit('access denied!');
 
 // 插件常量
-define('AI_AGENT_VERSION', '1.0.6');
+define('AI_AGENT_VERSION', '1.0.5');
 define('AI_AGENT_DIR', __DIR__);
 define('AI_AGENT_URL', '../content/plugins/ai_agent');
 
@@ -205,6 +205,9 @@ function ai_agent_index_footer()
             </div>
         </div>
     </div>
+    <script>
+    var AI_AGENT_API = "<?php echo rtrim(Option::get('blogurl'), '/'); ?>/?plugin=ai_agent&action=";
+    </script>
     <script src="<?php echo AI_AGENT_URL; ?>/assets/js/frontend.js?v=<?php echo AI_AGENT_VERSION; ?>"></script>
     <?php
 }
