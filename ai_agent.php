@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: AI Agent 智能助手
+Plugin Name: AI Agent 智能助手（免费版）
 Version: 1.0.5
 Plugin URL: https://www.emlog.net/plugin/detail/ai_agent
 Description: 首款基于 ReAct Agent + 工具调用 + 三层记忆系统的博客智能运维助手，让AI真正"读懂你的博客"。
