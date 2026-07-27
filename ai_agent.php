@@ -178,11 +178,18 @@ addAction('adm_footer', 'ai_agent_admin_footer');
 function ai_agent_index_footer()
 {
     $config = ai_agent_get_config();
-    // 检查访客权限
     $uid = UID;
     if (!$config['guest_allowed'] && $uid < 1) {
         return;
     }
+    // Compute plugin API base URL (handle incomplete blogurl)
+    $blogurl = rtrim(Option::get('blogurl'), '/');
+    if (empty($blogurl) || $blogurl === 'http://' || $blogurl === 'https://') {
+        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'] ?? '';
+        $blogurl = $scheme . '://' . $host;
+    }
+    $plugin_api = $blogurl . '/?plugin=ai_agent&action=';
     ?>
     <link rel="stylesheet" href="<?php echo AI_AGENT_URL; ?>/assets/css/frontend.css?v=<?php echo AI_AGENT_VERSION; ?>">
     <style>
@@ -205,9 +212,7 @@ function ai_agent_index_footer()
             </div>
         </div>
     </div>
-    <script>
-    var AI_AGENT_API = "<?php echo rtrim(Option::get('blogurl'), '/'); ?>/?plugin=ai_agent&action=";
-    </script>
+    <script>var AI_AGENT_API = "<?php echo $plugin_api; ?>";</script>
     <script src="<?php echo AI_AGENT_URL; ?>/assets/js/frontend.js?v=<?php echo AI_AGENT_VERSION; ?>"></script>
     <?php
 }
